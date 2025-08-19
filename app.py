@@ -13,19 +13,25 @@ class Base64API(BaseHTTPRequestHandler):
         content_length = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_length) # POST body'ni okuyoruz
         try:
-            data = json.loads(body) # POST edilen JSON'u dictionary'ye çeviriyoruz
-            text = data.get("text", "") # JSON'dan "text" alanını alıyoruz
-            base64Content = base64.b64encode(text.encode("utf-8")).decode("utf-8") # Metni base64'e çeviriyoruz
-            success = True if base64Content else False # Başarılı bir dönüş olup olmadığını kontrol ediyoruz
+            data = json.loads(body)
+            text = data.get("text", "")
+            model = data.get("mode", "encode").lower() # Varsayılan olarak encode modu kullanılır
 
-            response = {
-                "success": success,
-                "base64Content": base64Content
-            }
+            if model == "encode": # Encode modu kullanılır
+                base64_content = base64.b64encode(text.encode("utf-8")).decode("utf-8")
+                response = {"success": True, "base64Content": base64_content}
+            elif model == "decode": # Decode modu kullanılır
+                decoded_text = base64.b64decode(text).decode("utf-8")
+                response = {"success": True, "decodedText": decoded_text}
+            else: # Hatalı mod kullanılırsa hata mesajı döndürülür
+                response = {"success": False, "error": "Invalid model"}
+
         except Exception as e:
             response = {"success": False, "error": str(e)} # Hata durumunda hata mesajını döndürüyoruz
 
         self._send_response(response) # JSON yanıtını gönderiyoruz
+
+
 
 # Serveri başlat
 def run(server_class=HTTPServer, handler_class=Base64API, port=8080): # Port numarasını 8080 olarak belirledik
