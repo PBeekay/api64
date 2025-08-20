@@ -1,28 +1,23 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json, base64
 from urllib.parse import urlparse, parse_qs
-import threading
 import socketserver
 
 class Base64API(BaseHTTPRequestHandler): # BaseHTTPRequestHandler sınıfını kullanarak HTTP isteklerini işlemek için bir sınıf oluşturuyoruz
-    def _send(self, response): # Yanıtı göndermek için bir fonksiyon oluşturuyoruz
+    def _send(self, r): # Yanıtı göndermek için bir fonksiyon oluşturuyoruz
         self.send_response(200) # HTTP 200 OK yanıtı gönderiyoruz
         self.send_header("Content-Type", "application/json") # İçerik tipi olarak JSON belirtiyoruz
-        self.end_headers()
-        self.wfile.write(json.dumps(response, ensure_ascii=False).encode()) # JSON'u byte çevirip gönderiyoruz
-
-    def process(self, text, mode): # Metni işleme fonksiyonu
+        self.end_headers() # Yanıtın başlıklarını gönderiyoruz
+        self.wfile.write(json.dumps(r, ensure_ascii=False).encode()) # JSON'u byte çevirip gönderiyoruz
+    
+    def process(self, t, m): # Metni işleme fonksiyonu
         try:
-            if mode == "encode": # Encode modu kullanılır
-                return {"success": True, "result": base64.b64encode(text.encode()).decode()}
-            elif mode == "decode": # Decode modu kullanılır
-                return {"success": True, "result": base64.b64decode(text).decode()}
-            else: # Hatalı mod kullanılırsa hata mesajı döndürülür
-                return {"success": False, "error": f"Unknown mode: {mode}"}
-        except Exception as e: # Hata durumunda hata mesajı döndürülür
-            return {"success": False, "error": str(e)}
-
-    def do_POST(self): # POST isteklerini işlemek için bir fonksiyon oluşturuyoruz
+            if m == "encode": return {"success": True, "result": base64.b64encode(t.encode()).decode()} # Encode modu kullanılır
+            elif m == "decode": return {"success": True, "result": base64.b64decode(t).decode()} # Decode modu kullanılır
+            else: return {"success": False, "error": f"Unknown mode: {m}"} # Hatalı mod kullanılırsa hata mesajı döndürülür
+        except Exception as e: return {"success": False, "error": str(e)} # Hata durumunda hata mesajı döndürülür
+    
+    def do_POST(self):
         try:
             data = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0)))) # POST body'yi JSON'a çeviriyoruz
             self._send(self.process(data.get("text", ""), data.get("mode", "encode").lower())) # Metni işleme fonksiyonunu çağırıyoruz
@@ -39,7 +34,6 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, HTTPServer):
     daemon_threads = True
 
 if __name__ == "__main__":
-    server = ThreadedHTTPServer(("0.0.0.0", 8080), Base64API) # Multi-threaded server'ı başlatıyoruz
-    print("🚀 Multi-threaded server running on port 8080...") # Server'ın çalıştığını belirtiyoruz
-    print("📈 Now supports multiple concurrent requests!")
+    server = ThreadedHTTPServer(("0.0.0.0", 8080), Base64API)
+    print("🚀 Multi-threaded server running on port 8080...")
     server.serve_forever()
