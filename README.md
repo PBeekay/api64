@@ -2,20 +2,20 @@
 
 Saf Python ile geliştirilmiş Base64 kodlama/çözme API'si. Multi-threading desteği ile hızlı çalışır.
 
-## Özellikler
+## ✨ Özellikler
 
 - ✅ Base64 encode/decode
 - ✅ GET ve POST desteği
 - ✅ Multi-threading
 - ✅ 30 satır kod
 
-## Kullanım
+## 🚀 Kullanım
 
 ```bash
 python app.py
 ```
 
-### POST İstekleri
+### 📤 POST İstekleri
 
 **Encode:**
 ```bash
@@ -31,7 +31,7 @@ curl -X POST http://localhost:8080 \
      -d '{"text":"TWVyaGFiYQ==","mode":"decode"}'
 ```
 
-### GET İstekleri
+### 📥 GET İstekleri
 
 **Encode:**
 ```bash
@@ -43,7 +43,7 @@ curl "http://localhost:8080/?text=Merhaba&mode=encode"
 curl "http://localhost:8080/?text=TWVyaGFiYQ%3D%3D&mode=decode"
 ```
 
-## Yanıt Formatı
+## 📋 Yanıt Formatı
 
 ```json
 {
@@ -52,7 +52,7 @@ curl "http://localhost:8080/?text=TWVyaGFiYQ%3D%3D&mode=decode"
 }
 ```
 
-## Hata Örneği
+## ⚠️ Hata Örneği
 
 ```json
 {
@@ -61,20 +61,8 @@ curl "http://localhost:8080/?text=TWVyaGFiYQ%3D%3D&mode=decode"
 }
 ```
 
-## Kod Örnekleri
+## 💻 Kod Örneği
 
-### JavaScript
-```javascript
-const response = await fetch('http://localhost:8080', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({text: 'Hello', mode: 'encode'})
-});
-const data = await response.json();
-console.log(data.result);
-```
-
-### Python
 ```python
 import requests
 
@@ -83,6 +71,6 @@ response = requests.post('http://localhost:8080',
 print(response.json()['result'])
 ```
 
-## Lisans
+## 📄 Lisans
 
 MIT Lisansı
