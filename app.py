@@ -1,6 +1,8 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json, base64
 from urllib.parse import urlparse, parse_qs
+import threading
+import socketserver
 
 class Base64API(BaseHTTPRequestHandler): # BaseHTTPRequestHandler sınıfını kullanarak HTTP isteklerini işlemek için bir sınıf oluşturuyoruz
     def _send(self, response): # Yanıtı göndermek için bir fonksiyon oluşturuyoruz
@@ -31,7 +33,13 @@ class Base64API(BaseHTTPRequestHandler): # BaseHTTPRequestHandler sınıfını k
         params = parse_qs(urlparse(self.path).query) # URL'deki query parametrelerini alıyoruz
         self._send(self.process(params.get("text", [""])[0], params.get("mode", ["encode"])[0].lower())) # Metni işleme fonksiyonunu çağırıyoruz
 
+# Multi-threaded HTTP Server sınıfı
+class ThreadedHTTPServer(socketserver.ThreadingMixIn, HTTPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+
 if __name__ == "__main__":
-    server = HTTPServer(("0.0.0.0", 8080), Base64API) # Server'ı başlatıyoruz
-    print("🚀 Server running on port 8080...") # Server'ın çalıştığını belirtiyoruz
+    server = ThreadedHTTPServer(("0.0.0.0", 8080), Base64API) # Multi-threaded server'ı başlatıyoruz
+    print("🚀 Multi-threaded server running on port 8080...") # Server'ın çalıştığını belirtiyoruz
+    print("📈 Now supports multiple concurrent requests!")
     server.serve_forever()
