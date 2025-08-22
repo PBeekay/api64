@@ -23,18 +23,18 @@ class Base64API(BaseHTTPRequestHandler): # BaseHTTPRequestHandler sınıfını k
         self.end_headers() # Yanıtın başlıklarını gönderiyoruz
         self.wfile.write(str(r).encode("utf-8")) # Text'i byte çevirip gönderiyoruz
     
-    def custom_log_request(self, method, path, status_code, mode):
+    def custom_log_request(self, method, path, status_code, mode): # İstek loglarını kaydetmek için bir fonksiyon oluşturuyoruz
         """İstek loglarını kaydet"""
-        client_ip = self.client_address[0]
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        client_ip = self.client_address[0] # İstek yapan client'ın IP adresini alıyoruz
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S") # Şu anki tarihi ve saati alıyoruz
         
-        log_message = f"[{timestamp}] {method} {path} - IP: {client_ip} - Status: {status_code} - Mode: {mode}"
-        logger.info(log_message)
+        log_message = f"[{timestamp}] {method} {path} - IP: {client_ip} - Status: {status_code} - Mode: {mode}" # Log mesajını oluşturuyoruz
+        logger.info(log_message) # Log mesajını kaydediyoruz
     
     def process(self, t, m): # Metni işleme fonksiyonu
         try:
             if m == "encode": 
-                result = base64.b64encode(t.encode()).decode() # Encode modu kullanılır
+                result = base64.b64encode(t.encode()).decode() # String'i encode et Byte'e çevirip decode et
             elif m == "decode": 
                 result = base64.b64decode(t).decode() # Decode modu kullanılır
             else: 
