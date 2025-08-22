@@ -34,9 +34,9 @@ class Base64API(BaseHTTPRequestHandler): # BaseHTTPRequestHandler sınıfını k
     def process(self, t, m): # Metni işleme fonksiyonu
         try:
             if m == "encode": 
-                result = base64.b64encode(t.encode()).decode() # String'i encode et Byte'e çevirip decode et
+                result = base64.b64encode(t.encode()) # String'i encode et Byte'e çevirip decode et
             elif m == "decode": 
-                result = base64.b64decode(t).decode() # Decode modu kullanılır
+                result = base64.b64decode(t) # Decode modu kullanılır
             else: 
                 result = f"Error: Unknown mode: {m}" # Hatalı mod kullanılırsa hata mesajı döndürülür
             return result
